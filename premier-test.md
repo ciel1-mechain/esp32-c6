@@ -110,3 +110,68 @@ idf.py -p <PORT> monitor
 ---
 
 **Bonnes expérimentations avec votre ESP32-C6 🚀 !**
+
+---
+# Premier programme "Hello World" : Faire clignoter une LED sur ESP32-C6
+
+Ce guide présente un exemple simple pour faire clignoter une LED avec la carte ESP32-C6.  
+Ce type de programme est le point de départ classique pour découvrir l’utilisation des broches GPIO.
+
+---
+
+## 1. Connexion matérielle
+
+- Branchez une LED (avec une résistance de 220 à 330 Ω) entre la broche GPIO8 (par exemple) et GND de la carte.
+- Le côté long (anode) de la LED va sur GPIO8, le côté court (cathode) sur GND.
+
+> Astuce : Certaines cartes de développement ont déjà une LED connectée (souvent sur GPIO8, GPIO2 ou GPIO5).
+
+---
+
+## 2. Code source (ESP-IDF, C)
+
+Créez un fichier `blink.c` dans le dossier `main/` de votre projet ESP-IDF :
+
+```c
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
+
+#define LED_GPIO 8 // Modifier selon la broche utilisée
+
+void app_main(void)
+{
+    gpio_reset_pin(LED_GPIO);
+    gpio_set_direction(LED_GPIO, GPIO_MODE_OUTPUT);
+
+    while (1) {
+        gpio_set_level(LED_GPIO, 1); // LED ON
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        gpio_set_level(LED_GPIO, 0); // LED OFF
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+    }
+}
+```
+
+---
+
+## 3. Compilation et flash
+
+Dans un terminal, compilez et téléversez :
+
+```bash
+idf.py build
+idf.py -p <PORT> flash monitor
+```
+Remplacez `<PORT>` par le port série de votre carte.
+
+---
+
+## 4. Résultat
+
+La LED doit clignoter à un rythme d’1 seconde (0,5 s allumée, 0,5 s éteinte).
+
+---
+
+**Félicitations, vous avez réalisé votre premier "Hello World" sur ESP32-C6 !**
